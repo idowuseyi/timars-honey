@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { PRODUCTS, getProduct } from "@/lib/products";
 import { formatNaira } from "@/lib/money";
 import { whatsappForProduct } from "@/lib/whatsapp";
+import { AddToCartButton } from "@/components/AddToCartButton";
 
 export function generateStaticParams() {
   return PRODUCTS.map((p) => ({ slug: p.slug }));
@@ -43,18 +44,10 @@ export default async function ProductPage({
         <p className="mt-6 max-w-md text-comb/80">{product.description}</p>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          {/* Online checkout arrives in the payments milestone; WhatsApp ordering
-              works today so the store is usable now. */}
-          <button
-            disabled
-            className="cursor-not-allowed rounded-full bg-comb/20 px-6 py-3 font-semibold text-comb/50"
-            title="Online checkout coming soon"
-          >
-            Add to cart (coming soon)
-          </button>
+          <AddToCartButton slug={product.slug} />
           <a
             href={whatsappForProduct(product.name, product.sizeLabel)}
-            className="rounded-full bg-honey px-6 py-3 font-semibold text-comb transition-colors hover:bg-pollen"
+            className="rounded-full border border-comb/20 px-6 py-3 font-semibold text-comb transition-colors hover:border-honey hover:text-honey"
           >
             Order on WhatsApp
           </a>

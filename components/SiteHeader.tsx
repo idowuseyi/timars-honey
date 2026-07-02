@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { WHATSAPP_GENERAL } from "@/lib/whatsapp";
+import { CartCount } from "@/components/CartCount";
 
 const NAV = [
   { href: "/shop", label: "Shop" },
@@ -24,6 +25,7 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
+          <CartCount />
         </nav>
         <a
           href={WHATSAPP_GENERAL}

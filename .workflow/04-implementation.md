@@ -1,10 +1,9 @@
 # 04 — Implementation (build log)
 
-Append-friendly log. Milestone **M0 (foundations) + M1 (catalogue)** and the
-non-transactional parts of the educative/trust/wholesale surface are built and
-green. Money paths (payments, cart/checkout, shipping, auth, admin, DB wiring)
-are scaffolded via interfaces but **not yet implemented** — tracked under *Status
-& remaining milestones*.
+Append-friendly log. Milestones **M0 (foundations) + M1 (catalogue) + M2 (cart +
+checkout)** and the educative/trust/wholesale surface are built and green. Live
+payments, shipping, auth, admin, and DB persistence are scaffolded via interfaces
+but **not yet implemented** — tracked under *Status & remaining milestones*.
 
 ## Files Changed
 Project scaffolded in place (Next.js 16.2.10, App Router, Tailwind v4, TypeScript).
@@ -21,9 +20,13 @@ Project scaffolded in place (Next.js 16.2.10, App Router, Tailwind v4, TypeScrip
 - **Domain / lib:** `lib/money.ts` (integer kobo), `lib/products.ts` (5 SKUs),
   `lib/benefits.ts` (A–H, claims-safe), `lib/whatsapp.ts`,
   `lib/payments/provider.ts` (`PaymentProvider` + `selectProvider`),
-  `lib/shipping/provider.ts` (`ShippingProvider`), `db/schema.ts` (Drizzle/Postgres).
-- **Tests:** `tests/money.test.ts`, `tests/catalogue.test.ts`, `tests/benefits.test.ts`,
-  `tests/payments.test.ts` — **15 passing**.
+  `lib/shipping/provider.ts` (`ShippingProvider`), `db/schema.ts` (Drizzle/Postgres),
+  `lib/cart.ts` (`buildOrderDraft` — server recomputes prices), `lib/orders.ts`.
+- **Cart & checkout (M2):** `components/CartProvider.tsx` (localStorage, slug+qty only),
+  `components/AddToCartButton.tsx`, `components/CartCount.tsx`, `app/cart/page.tsx`,
+  `app/checkout/page.tsx`, `app/checkout/actions.ts` (`placeOrder` server action).
+- **Tests:** money, catalogue, benefits (claims-safety), payments (`selectProvider`),
+  orders (price-recompute / tamper-proof) — **21 passing**.
 
 ## Key Decisions
 - **npm, not pnpm.** The environment's `pnpm` resolves to a Windows binary that
@@ -42,17 +45,21 @@ Project scaffolded in place (Next.js 16.2.10, App Router, Tailwind v4, TypeScrip
   site is usable now.
 
 ### Status & remaining milestones (Implement is NOT complete)
-Done: M0 foundations, M1 catalogue (read-only), educative carousel + Benefits page,
-trust strip, wholesale enquiry (via WhatsApp), design system, WhatsApp channel, CI-
-ready build + tests. **Remaining before Verify:** M2 cart + checkout, M3 payments
+Done: M0 foundations, M1 catalogue (read-only), **M2 cart + checkout** (client cart,
+server-recomputed totals, order placement → WhatsApp pay handoff), educative carousel
++ Benefits page, trust strip, wholesale enquiry (via WhatsApp), design system,
+WhatsApp channel, CI-ready build + tests; verified by an HTTP smoke test (all routes
+200, missing product 404). **Remaining before Verify:** M3 payments
 (Paystack→Flutterwave/Stripe + webhooks/verify), M4 shipping (Terminal Africa), M5
-optional accounts (Auth.js), admin CRUD + DB wiring (Neon), transactional email,
-full A–Z content, real product photos, and the Cloudflare (`timarshoney.cerfic.com`)
-deployment. These need owner credentials (see `.env.example`).
+optional accounts (Auth.js), admin CRUD + DB wiring/persistence (Neon), transactional
+email, full A–Z content, real product photos, and the Cloudflare
+(`timarshoney.cerfic.com`) deployment. These need owner credentials (see
+`.env.example`).
 
 ## Deviations from Design
-- **No functional online checkout yet** — foundations-first scope; the payment/cart
-  design is unchanged, just not built. Interfaces match `03-design.md`.
+- **Checkout places an order but payment is a WhatsApp handoff** (M2): the cart→
+  checkout→order path and server-side price recompute are real and tested; live card
+  payment + DB persistence are M3. Shipping is ₦0 until the courier milestone.
 - **Wholesale form composes a WhatsApp message** instead of writing to
   `distributor_applications` — DB capture lands with the DB-wiring milestone; no data
   is lost meanwhile.
