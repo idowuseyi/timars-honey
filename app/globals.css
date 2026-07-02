@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/* "Comb & Ledger" brand tokens (03-design.md). Custom colors become Tailwind
+   utilities: bg-comb, text-honey, border-propolis, etc. */
+@theme {
+  --color-comb: #241a10;
+  --color-bark: #3a2a18;
+  --color-honey: #e39a1b;
+  --color-pollen: #f6c445;
+  --color-propolis: #46603f;
+  --color-wax: #f7eedb;
+
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-hanken);
+  --font-mono: var(--font-spline);
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-wax);
+  color: var(--color-comb);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Quality floor: honour reduced-motion everywhere (WCAG 2.2.2 + design). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Honeycomb hex cell — the signature frame. */
+.hex {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}

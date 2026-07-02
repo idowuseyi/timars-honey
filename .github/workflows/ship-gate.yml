@@ -15,14 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Set up whatever toolchains your project needs so check-gate.sh can run
-      # the real build/test/lint. Uncomment/adjust for your stack:
-      # - uses: actions/setup-node@v4
-      #   with: { node-version: 'lts/*' }
-      # - run: npm ci
-      # - uses: actions/setup-python@v5
-      #   with: { python-version: '3.x' }
-      # - run: pip install -r requirements.txt
+      # Node toolchain so check-gate.sh can run the real test/build.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
 
       - name: Run ship gate check
         run: |
