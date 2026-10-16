@@ -2,17 +2,22 @@
 
 import { useState } from "react";
 import { whatsappLink } from "@/lib/whatsapp";
+import { submitDistributorApplication } from "@/app/wholesale/actions";
 
-// Until the DB-backed distributor capture lands, the form composes a WhatsApp
-// message so wholesale enquiries reach the owner immediately and nothing is lost.
+// Enquiries are stored in `distributor_applications` and also sent via WhatsApp so
+// the owner hears immediately. WhatsApp opens synchronously in the submit handler
+// (popup blockers reject window.open after an await); the DB save runs alongside.
 export function WholesaleForm() {
   const [form, setForm] = useState({
     business: "",
     contact: "",
     phone: "",
+    email: "",
     volume: "",
     message: "",
   });
+
+  const [sent, setSent] = useState(false);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -24,9 +29,19 @@ export function WholesaleForm() {
       `Business: ${form.business}\n` +
       `Contact: ${form.contact}\n` +
       `Phone: ${form.phone}\n` +
+      `Email: ${form.email}\n` +
       `Monthly volume: ${form.volume}\n` +
       `Message: ${form.message}`;
     window.open(whatsappLink(msg), "_blank", "noopener");
+    void submitDistributorApplication({
+      businessName: form.business,
+      contactName: form.contact,
+      phone: form.phone,
+      email: form.email,
+      monthlyVolume: form.volume,
+      message: form.message,
+    });
+    setSent(true);
   };
 
   const field =
@@ -47,6 +62,10 @@ export function WholesaleForm() {
         <input required value={form.phone} onChange={set("phone")} className={field} />
       </label>
       <label className="block text-sm">
+        Email
+        <input required type="email" value={form.email} onChange={set("email")} className={field} />
+      </label>
+      <label className="block text-sm">
         Expected monthly volume
         <input value={form.volume} onChange={set("volume")} placeholder="e.g. 10 × 25L kegs" className={field} />
       </label>
@@ -60,6 +79,11 @@ export function WholesaleForm() {
       >
         Send enquiry
       </button>
+      {sent && (
+        <p role="status" className="text-sm text-comb/80">
+          Thanks — we&apos;ve received your enquiry and will be in touch shortly.
+        </p>
+      )}
     </form>
   );
 }

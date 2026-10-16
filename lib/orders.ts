@@ -1,4 +1,5 @@
 import { buildOrderDraft, type CartLine, type OrderDraft } from "./cart";
+import type { Product } from "./products";
 
 export interface Order extends OrderDraft {
   ref: string;
@@ -7,12 +8,14 @@ export interface Order extends OrderDraft {
 }
 
 /** Build a priced order from a cart. Shipping defaults to 0 (arranged after
- *  checkout until the courier milestone lands). `ref` is injectable for tests. */
+ *  checkout until the courier milestone lands). `catalogue` defaults to the static
+ *  seed; checkout passes the DB catalogue when Neon is configured. `ref` is
+ *  injectable for tests. */
 export function createOrder(
   lines: CartLine[],
-  opts: { shippingKobo?: number; ref?: string } = {},
+  opts: { shippingKobo?: number; ref?: string; catalogue?: Product[] } = {},
 ): Order {
-  const draft = buildOrderDraft(lines);
+  const draft = buildOrderDraft(lines, opts.catalogue);
   if (draft.items.length === 0) throw new Error("cart is empty");
   const shippingKobo = opts.shippingKobo ?? 0;
   return {

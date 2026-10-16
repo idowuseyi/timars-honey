@@ -12,7 +12,8 @@
     "db:migrate": "drizzle-kit migrate",
     "cf:build": "opennextjs-cloudflare build",
     "cf:preview": "opennextjs-cloudflare preview",
-    "cf:deploy": "opennextjs-cloudflare deploy"
+    "cf:deploy": "opennextjs-cloudflare deploy",
+    "db:seed": "tsx --env-file-if-exists=.env.local db/seed.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -22,6 +23,7 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
     "@opennextjs/cloudflare": "^1.20.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
@@ -29,6 +31,7 @@
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.10",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^4.1.9",
     "wrangler": "^4.107.0"
